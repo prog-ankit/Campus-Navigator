@@ -4,9 +4,11 @@ import com.springboot.university.service.serviceimpl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,11 +38,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         //disables CSRF - Since we disable the CSRF, we do not need to send X-CSRF-TOKEN for POST Request.
         http.csrf(AbstractHttpConfigurer::disable);
-
+ 
         //Adding these two statements will show forbidden access as
         // we need to add formLogin() method for UI login and httpBasic() method for REST API login
-        http.authorizeHttpRequests(customizer -> customizer.anyRequest().authenticated());
-        http.formLogin(Customizer.withDefaults());
+        http.authorizeHttpRequests(customizer -> customizer
+                .requestMatchers("api/register","api/login")
+                .permitAll()
+                .anyRequest()
+                .authenticated());
+
+//        http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
 
         //This does not maintains any state of current connection and creates new sessioon id every time user logsin.
@@ -49,25 +56,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    //Static Method - With this method, we can use static authentication mechanism by hardcoding the credentials.
-/*    public UserDetailsService userDetailsService() {
-        UserDetails user1 = User
-                .withDefaultPasswordEncoder()
-                .username("ankit")
-                .password("ankit")
-                .roles("user")
-                .build();
-
-        UserDetails user2 = User
-                .withDefaultPasswordEncoder()
-                .username("admin")
-                .password("admin")
-                .roles("admin")
-                .build();
-
-        //Since UserDetailsService is an interface, we have used its implementation following which has an inbuilt implementation of UserDetailsService
-        return new InMemoryUserDetailsManager(user1,user2);
-    }*/
 
     //Dynamic Method - With this method, we define authentication using custom authentication provider to authenticate the credentials using database.
     //  DaoAuthentication Provider is used for username and password based Authentication and JwtAuthenticationProvider for authenticating using JWT token
@@ -81,6 +69,11 @@ public class SecurityConfig {
         return daoAuthenticationProvider;
     }
 
+    //Authentication Manager will then interact with Authentication Provider and we need to mention the login path as well to validate and generate the access token.
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
     @Bean
     public BCryptPasswordEncoder getBCryptPasswordencoder() {
         return new BCryptPasswordEncoder(12);
