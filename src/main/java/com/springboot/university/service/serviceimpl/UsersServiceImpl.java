@@ -20,6 +20,9 @@ public class UsersServiceImpl implements UsersService {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
+    JWTServiceImpl jwtService;
+
+    @Autowired
     AuthenticationManager authManager;
 
     @Override
@@ -34,7 +37,7 @@ public class UsersServiceImpl implements UsersService {
         //UsernamePasswordAuthenticationToken is a class that implements Authentication interface.
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
         if(authentication.isAuthenticated()) {
-            System.out.println("Done!!");
+            System.out.println(jwtService.generateToken(user.getUsername()));
             return true;
         }
         System.out.println("Failure");

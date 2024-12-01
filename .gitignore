@@ -12,6 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
+spring security flow.txt
 
 ### IntelliJ IDEA ###
 .idea
