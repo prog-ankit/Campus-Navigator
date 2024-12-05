@@ -16,6 +16,7 @@ This project, **Campus Navigator: University-College API Suite**, is a Spring Bo
 - **Database**: MySQL, JPA Repository
 - **Validation**: Custom Validators
 - **Architecture**: MVC (Model-View-Controller)
+- **Security**: JWT Authentication using Spring Security and Role-Based Authentication
 
 ## How to Use this Repository
 
