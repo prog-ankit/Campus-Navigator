@@ -4,7 +4,6 @@ import com.springboot.university.models.University;
 import com.springboot.university.requestresponse.request.UniversityRequestDto;
 import com.springboot.university.requestresponse.response.UniversityResponseDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
